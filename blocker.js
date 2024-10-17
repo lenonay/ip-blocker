@@ -4,4 +4,5 @@ import { ProccessLog } from "./controllers/logger.js";
 
 const data = fs.readFileSync(LOG, "utf-8");
 
-ProccessLog(data);
+// Procesamos el Log y lo metemos a la base de datos
+await ProccessLog(data)
