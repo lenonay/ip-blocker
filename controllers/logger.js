@@ -1,3 +1,5 @@
+import { MySQL } from "../models/mysql.js";
+
 export function ProccessLog(content) {
 
     const data_structure = [];
@@ -9,6 +11,10 @@ export function ProccessLog(content) {
     });
 
     const sorted = data_structure.sort(SortIPAddress);
+
+    if(!MySQL.Verify()){
+        return "Missing tables in mysql database";
+    }
 
 }
 

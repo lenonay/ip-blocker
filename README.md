@@ -1,5 +1,6 @@
 # Dependencias
 - dotenv
+- mysql2
 
 # Setup
 Se necesita lo siguiente en el archivo .env

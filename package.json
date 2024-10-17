@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/lenonay/ip-blocker#readme",
   "dependencies": {
-    "dotenv": "16.4.5"
+    "dotenv": "16.4.5",
+    "mysql2": "3.11.3"
   }
 }
