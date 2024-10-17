@@ -20,7 +20,9 @@ export async function ProccessLog(content) {
     const Validate = await MySQL.Verify();
 
     if(Validate !== "Error"){
-        sorted_data.forEach(entry => MySQL.ProccessEntry(entry));
+        for (const entry of sorted_data) {
+            await MySQL.ProccessEntry(entry);
+        }
     }
 
 
