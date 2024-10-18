@@ -9,3 +9,7 @@ export const {
     DB_USER,
     DB_PASS
 } = process.env;
+
+export const FORBIDEN_URI = [
+    ".env"
+]
