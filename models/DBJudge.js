@@ -1,4 +1,5 @@
 import mysql2 from "mysql2/promise";
+import child_process, { exec } from "node:child_process";
 import { DB, DB_HOST, DB_USER, DB_PASS, FORBIDEN_URI, FORBIDEN_USER_AGENT } from "../config.js";
 
 const connect = await mysql2.createConnection({
@@ -29,36 +30,100 @@ export class DBJudge {
         }
 
         // Validamos el method
-        switch(true){
+        switch (true) {
             case status == 400:
                 peligro += 4;
-            break;
+                break;
 
             case status == 404:
                 peligro += 4;
-            break;
+                break;
 
             case status < 500 && status > 400:
                 peligro += 1;
-            break;
+                break;
         }
 
         // Validamos que la uri no tenga parametros prohibidos
-        if (FORBIDEN_URI.some( (url) => uri.includes(url))){
+        if (FORBIDEN_URI.some((url) => uri.includes(url))) {
             peligro += 3;
         }
 
         // Validamos el user agent
-        if (FORBIDEN_USER_AGENT.some( agents => user_agent.includes(agents))){
+        if (FORBIDEN_USER_AGENT.some(agents => user_agent.includes(agents))) {
             peligro += 10;
         }
-    
+
         // Si peligro es mayor 1, contamos la peticion como maliciosa.
         const malicioso = (peligro > 0) ? 1 : 0;
 
-        const [ result ] = await connect.query(
+        const [result] = await connect.query(
             "UPDATE IPs SET peligro = peligro + ?, malicious_count = malicious_count + ? WHERE ip LIKE ? ",
             [peligro, malicioso, ip]
         );
+    }
+
+    static async GetIPsInfo() {
+        const [result] = await connect.query("SELECT * FROM IPs");
+
+        return result;
+    }
+
+    static async JudgeBehavior(info) {
+        const { ip, peligro, baneos, is_banned } = info;
+        // Si ya está baneado lo dejamos
+        if (is_banned === "true") return
+
+        let ban_level = 0;
+
+        // Creamos el nivel de baneo
+        switch (true) {
+            case peligro > 10 && peligro <= 30:
+                ban_level = 1;
+                break;
+
+            case peligro > 31 && peligro <= 50:
+                ban_level = 2;
+                break;
+
+            case peligro > 51 && peligro <= 70:
+                ban_level = 3;
+                break;
+
+            case peligro > 71:
+                ban_level = 4;
+                break;
+        }
+
+        // Si el nivel es 0 nos salimos
+        if (ban_level === 0) {
+            return;
+        }
+
+        // Equivalencias entre niveles y horas baneadas
+        const bans = {
+            0: null,
+            1: 1,
+            2: 4,
+            3: 24,
+            4: 0
+        }
+
+        // Obtenemos cuantos ms estará baneado
+        const ban_time = (bans[(ban_level + baneos)]) * 60 * 60 * 1000;
+
+        // Obtenemos la fecha actual
+        const current_time = new Date();
+
+        // Obtenemos otra fecha
+        const unban_time = new Date();
+
+        // Cambiamos la fecha a la acutal + las horas baneadas
+        unban_time.setTime(current_time.getTime() + ban_time);
+
+        // Metemos al Firewall
+        const addRule = `sudo ufw deny from ${ip}`;
+        exec(addRule, (error) => { if (error) console.log(error);});
+
     }
 }

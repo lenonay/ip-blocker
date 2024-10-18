@@ -46,6 +46,9 @@ export class MySQL {
         if (tests.every((val) => val === true)) {
             await connect.query("DELETE FROM IPs");
             console.log("Se ha vaciado la tabla IPs");
+
+            await connect.query("DELETE FROM Baneos");
+            console.log("Se ha vaciado la tabla de baneos");
             return true;
         } else {
             return false;

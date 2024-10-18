@@ -9,8 +9,8 @@ CREATE TABLE IPs(
 ip VARCHAR(20) PRIMARY KEY,
 peligro INT NOT NULL DEFAULT 0,
 baneos INT NOT NULL DEFAULT 0,
-last_ban TIMESTAMP,
-is_banned BIT DEFAULT 0,
+last_ban VARCHAR(40),
+is_banned VARCHAR(5) DEFAULT "false",
 malicious_count INT DEFAULT 0
 );
 

@@ -16,7 +16,8 @@ export const FORBIDEN_URI = [
     "\x16", "*",
     "robots.txt", "webui/",
     "Gh0st", "cloudflare",
-    "shell", "web-console"
+    "shell", "web-console",
+    "wp"
 ]
 
 // User agents que son usados en scrappers entre otras cosas
@@ -26,5 +27,6 @@ export const FORBIDEN_USER_AGENT = [
     "Googlebot", "Go-http-client",
     "Keydrop", "zgrab",
     "Odin", "CensysInspect",
-    "Custom-AsyncHttpClient", "TheInternetSearchx"
+    "Custom-AsyncHttpClient", "TheInternetSearchx",
+    "curl"
 ]
