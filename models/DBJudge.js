@@ -1,5 +1,5 @@
 import mysql2 from "mysql2/promise";
-import child_process, { exec } from "node:child_process";
+import { exec, execSync } from "node:child_process";
 import { DB, DB_HOST, DB_USER, DB_PASS, FORBIDEN_URI, FORBIDEN_USER_AGENT } from "../config.js";
 
 const connect = await mysql2.createConnection({
@@ -57,7 +57,7 @@ export class DBJudge {
         // Si peligro es mayor 1, contamos la peticion como maliciosa.
         const malicioso = (peligro > 0) ? 1 : 0;
 
-        const [result] = await connect.query(
+        await connect.query(
             "UPDATE IPs SET peligro = peligro + ?, malicious_count = malicious_count + ? WHERE ip LIKE ? ",
             [peligro, malicioso, ip]
         );
@@ -123,7 +123,18 @@ export class DBJudge {
 
         // Metemos al Firewall
         const addRule = `sudo ufw deny from ${ip}`;
-        exec(addRule, (error) => { if (error) console.log(error);});
+        execSync(addRule, (error) => { if (error) console.log(error);});
 
+        // Metemos el baneo a la tabla
+        await connect.query(
+            "INSERT INTO Baneos(ip, ban_level, time, unban_time) VALUES (?,?,?,?)",
+            [ ip, ban_level, current_time.toISOString(), unban_time.toISOString() ]
+        );
+
+        // Reinciamos el conteo de peligro y aumentamos en 1 los baneos 
+        await connect.query(
+            "UPDATE IPs SET peligro = 0,baneos = baneos + 1, last_ban = ?, is_banned = ? WHERE ip = ?",
+            [current_time.toISOString(), "true", ip]
+        );
     }
 }
