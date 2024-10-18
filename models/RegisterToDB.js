@@ -44,6 +44,8 @@ export class MySQL {
 
         // Validamos que hayan pasado todos los tests
         if (tests.every((val) => val === true)) {
+            await connect.query("DELETE FROM IPs");
+            console.log("Se ha vaciado la tabla IPs");
             return true;
         } else {
             return false;
