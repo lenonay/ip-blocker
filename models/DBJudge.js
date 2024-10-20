@@ -105,6 +105,11 @@ export class DBJudge {
         // Obtenemos cuantos ms estará baneado
         const ban_time = (bans[(ban_level + baneos)]) * 60 * 60 * 1000;
 
+        // Si es un baneo de nivel 4 añadimos 6 meses
+        if (ban_level === 4){
+            ban_time * 24 * 7 * 30 * 6;
+        }
+
         // Obtenemos la fecha actual
         const current_time = new Date();
 
