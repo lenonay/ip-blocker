@@ -1,4 +1,5 @@
 import { configDotenv } from "dotenv";
+import mysql2 from "mysql2/promise";
 
 configDotenv()
 
@@ -9,6 +10,14 @@ export const {
     DB_USER,
     DB_PASS
 } = process.env;
+
+// 
+export const connect = await mysql2.createConnection({
+    host: DB_HOST,
+    user: DB_USER,
+    password: DB_PASS,
+    database: DB
+});
 
 export const FORBIDEN_URI = [
     ".env", "cgi-bin/luci/;stok=/locale",

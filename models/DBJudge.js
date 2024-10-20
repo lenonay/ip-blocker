@@ -1,13 +1,6 @@
-import mysql2 from "mysql2/promise";
 import { exec, execSync } from "node:child_process";
-import { DB, DB_HOST, DB_USER, DB_PASS, FORBIDEN_URI, FORBIDEN_USER_AGENT } from "../config.js";
+import { connect, FORBIDEN_URI, FORBIDEN_USER_AGENT } from "../config.js";
 
-const connect = await mysql2.createConnection({
-    host: DB_HOST,
-    user: DB_USER,
-    password: DB_PASS,
-    database: DB
-});
 
 export class DBJudge {
     static async GetAll() {
