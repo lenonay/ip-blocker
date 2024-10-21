@@ -146,8 +146,6 @@ export class DBJudge {
         const addRule = `sudo ufw deny from ${ip}`;
         execSync(addRule, (error) => { if (error) console.log(error); });
 
-        console.log(ip, ban_time, unban_time, current_time);
-
         // Metemos el baneo a la tabla
         await connect.query(
             "INSERT INTO Baneos(ip, ban_level, time, unban_time) VALUES (?,?,?,?)",
