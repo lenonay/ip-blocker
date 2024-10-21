@@ -17,4 +17,6 @@ export async function JudgeBehavior(){
     for(const info of AllInfo){
         await DBJudge.JudgeBehavior(info);
     }
+
+    console.log("Terminado!");
 }

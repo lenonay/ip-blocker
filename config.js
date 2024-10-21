@@ -38,5 +38,6 @@ export const FORBIDEN_USER_AGENT = [
     "Keydrop", "zgrab",
     "Odin", "CensysInspect",
     "Custom-AsyncHttpClient", "TheInternetSearchx",
-    "curl"
+    "curl", "",
+    " "
 ]

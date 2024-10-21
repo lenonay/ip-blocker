@@ -1,3 +1,5 @@
+import fs from "node:fs/promises"
+
 import { connect } from "../config.js";
 import { Formater } from "../utils/date.js";
 
@@ -50,37 +52,71 @@ export class MySQL {
             , time,
             utc, method_unf,
             uri, version_unf,
-            status, req_bytes_unf,
+            status_unf, req_bytes_unf,
             , ...user_agent_unf
         ] = entry
 
         //  Quitamos la " delante del metodo
-        let method = method_unf.slice(1);
+        let method = (method_unf) ? method_unf.slice(1) : "NULL";
         // Quitamos la " al final de la version
-        const version = version_unf.slice(0, -1)
+        let version = (version_unf) ? version_unf.slice(0, -1) : "NULL"
         // Unimos todos los elementos restantes que forman el user agent
         const user_agent = user_agent_unf.join(" ");
         // Unimos la hora con la zona horaria
         const timestamp_unf = time + utc;
+        
         // Formateamos la fecha a ISO
-        const timestamp = Formater(timestamp_unf);
+        const timestamp = (isNaN(timestamp_unf)) ? new Date().toISOString() : Formater(timestamp_unf);
 
         // Validamos el tamaño del método
         if (method.length > 20){
             method = method.slice(0, 19);
         }
 
+        // Validamos el tamaño de la version
+        if (version.length > 10){
+            version = version.slice(0, 9);
+        }
+
         // Validamos que req_bytes sea un numero, si lo es asignamos ese valor, sino 0
         let req_bytes = (isNaN(req_bytes_unf)) ? 0 : req_bytes_unf;
+
+        // Validamos que el codigo de estado no este vacio
+        let status = (!status_unf) ? 400 : status_unf;
+        // Validamos que sea un numero
+        status = (isNaN(status_unf)) ? 400 : status_unf;
 
         // Metemos la IP a las tabla de IPs
         await AddIPtoDB(ip);
 
         // Metemos la peticion a la tabla
-        await connect.query(
-            "INSERT INTO Peticiones(ip, method, uri, version, status, req_bytes, user_agent, timestamp) VALUES (?,?,?,?,?,?,?,?)",
-            [ip, method, uri, version, status, req_bytes, user_agent, timestamp]
-        );
+        try {
+
+            await connect.query(
+                "INSERT INTO Peticiones(ip, method, uri, version, status, req_bytes, user_agent, timestamp) VALUES (?,?,?,?,?,?,?,?)",
+                [ip, method, uri, version, status, req_bytes, user_agent, timestamp]
+            );
+        } catch (e){
+            console.log("Error al meter un registro");
+
+            // Metemos el error a la tabla
+            fs.writeFile(
+                "./errores.txt",
+                `IP=${ip}|Error=${e}\n`,
+            { flag: "a+"}
+            );
+
+            
+            // Le metemos +20 de peligro a esa IP si existe
+            if(ip){
+                await connect.query(
+                    "UPDATE IPs SET peligro = peligro + ? WHERE ip = ?",
+                    [20, ip]
+                );
+                console.log("Añadido 20 puntos de peligro a",ip);
+            }
+
+        }
 
     }
 }

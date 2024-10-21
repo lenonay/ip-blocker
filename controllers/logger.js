@@ -33,6 +33,7 @@ export async function ProccessLog(content) {
         exit(1);
     }
 
+    console.log("Terminado!");
 
 }
 

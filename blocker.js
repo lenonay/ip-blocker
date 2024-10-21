@@ -25,15 +25,19 @@ try {
     const data = fs.readFileSync(LOG, "utf-8");
 
     // Procesamos el Log y lo metemos a la base de datos
+    console.log("Procesando el log...");
     await ProccessLog(data)
 
     // Juzgar el comportamiento de las peticiones
+    console.log("Juzgando las peticiones...");
     await JudgeBehavior();
 
     // Revisar la tabla de baneos para desbanear si es necesario
+    console.log("Revisando si hay que desbanear a alguien...");
     await ReviewBans();
 
     // Una vez terminado renombramos el fichero viejo
+    console.log("Limpiand ficheros temporales...")
     await CleanLogs();
 
     // Salimos del archivo

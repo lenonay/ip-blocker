@@ -9,4 +9,7 @@ export async function ReviewBans(){
         // Revisamos si hay que eliminar algun ban
         await DBReviewBans.ReviewBan(ban);
     }
+    
+    console.log("Terminado!");
+
 }
