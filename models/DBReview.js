@@ -1,4 +1,4 @@
-import { exec } from "node:child_process";
+import { exec, execSync } from "node:child_process";
 import { connect } from '../config.js';
 
 export class DBReviewBans {
@@ -27,7 +27,7 @@ export class DBReviewBans {
 
         // Lo sacamos del firewall
         const comando = `ufw delete deny from ${ip}`;
-        exec(comando, (error) => { if(error) console.log(error); });
+        execSync(comando, (error) => { if(error) console.log(error); });
 
         // Lo quitamos de la DB.
         await connect.query(
