@@ -1,10 +1,10 @@
-import fs from "node:fs";
 import mysql2 from "mysql2/promise";
 import { exit } from "node:process";
 import { configDotenv } from "dotenv";
 
+configDotenv();
 // Validamos la ruta del config 
-if(!fs.existsSync("./.env")){
+if(!process.env.LOG){
     console.error("No se encontró el fichero {.env}, es necesario que contenga los parametros adecuados");
     console.log("Ruta actual de trabajo:",process.cwd());
     console.log("Mueve el fichero a esta ruta desde donde ejectua el programa",
@@ -12,8 +12,6 @@ if(!fs.existsSync("./.env")){
     );
     exit(1);
 }
-
-configDotenv();
 
 //  Parametros del .env
 export const {
