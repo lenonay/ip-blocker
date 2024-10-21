@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import path from "node:path";
 import { execSync } from "node:child_process";
 import { exit } from "node:process";
 
@@ -20,6 +21,28 @@ console.log("Se ha vaciado la tabla IPs");
 // Vaciamos las tablas de baneos
 await connect.query("DELETE FROM Baneos");
 console.log("Se ha vaciado la tabla de baneos");
+
+// Verificamos si existe el fichero
+const existe = fs.existsSync(LOG);
+
+// Si no existe el fichero validamos todo lo demas
+if(!existe){
+    console.log("No hay fichero de logs");
+    
+    // Juzgar el comportamiento de las peticiones
+    console.log("Juzgando las peticiones y las IPs...");
+    await JudgeBehavior();
+
+    // Revisar la tabla de baneos para desbanear si es necesario
+    console.log("Revisando si hay que desbanear a alguien...");
+    await ReviewBans();
+    
+    // Una vez terminado renombramos el fichero viejo
+    console.log("Limpiand ficheros temporales...")
+    await CleanLogs();
+    
+    exit(1);
+}
 
 try {
     const data = fs.readFileSync(LOG, "utf-8");
