@@ -6,12 +6,14 @@ export async function JudgeBehavior(){
 
     // Iteramos por cada peticion
     for(const peticion of peticiones){
+        // Juzgamos cada petición para ir acumulando peligro
         DBJudge.JudgeEntry(peticion);
     }
 
     // Obtener IPs info
     const AllInfo = await DBJudge.GetIPsInfo();
 
+    // Iterar para saber si hay que banear a esa IP
     for(const info of AllInfo){
         await DBJudge.JudgeBehavior(info);
     }

@@ -3,5 +3,7 @@ import { LOG } from "../config.js";
 
 export async function CleanLogs(){
     // Renombramos el log para que todo funcione OK.
-    const result = fs.rename(LOG, `${LOG}.old`);
+    fs.rename(LOG, `${LOG}.old`);
+
+    console.log("Se ha limpiado el log");
 }

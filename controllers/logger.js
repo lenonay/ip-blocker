@@ -1,3 +1,5 @@
+import { exit } from "node:process";
+
 import { MySQL } from "../models/RegisterToDB.js";
 
 export async function ProccessLog(content) {
@@ -19,19 +21,29 @@ export async function ProccessLog(content) {
     // Validamos que las tablas estén correctas y vaciamos la de peticiones
     const Validate = await MySQL.Verify();
 
-    if(Validate !== "Error"){
+    // Si la validación es correcta
+    if (Validate) {
+        // Iteramos por cada entrada
         for (const entry of sorted_data) {
             await MySQL.ProccessEntry(entry);
         }
+    } else {
+        // Mostramos el error y salimos
+        console.log("Faltan tablas necesarias");
+        exit(1);
     }
 
 
 }
 
+// Funcion para ordenar las IP
 function SortIPAddress(a, b) {
+    // Transformamos a numero la union de los numeros
     const ipA = Number(a[0].split("."));
-
+    
+    // Transformamos a numero la union de los numeros
     const ipB = Number(b[0].split("."));
 
+    // Devolvemos A - B
     return ipA - ipB;
 }

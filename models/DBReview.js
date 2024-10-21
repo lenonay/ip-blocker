@@ -34,5 +34,11 @@ export class DBReviewBans {
             "DELETE FROM Baneos WHERE ip = ?",
             [ ip ]
         );
+
+        // Actualizamos el valor de is_banned a false
+        await connect.query(
+            "UPDATE FROM IPs set is_banned = ? WHERE ip = ?",
+            ["false", ip]
+        );
     }
 }

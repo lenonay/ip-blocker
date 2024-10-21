@@ -1,11 +1,13 @@
-import { exec, execSync } from "node:child_process";
+import { execSync } from "node:child_process";
 import { connect, FORBIDEN_URI, FORBIDEN_USER_AGENT } from "../config.js";
 
 
 export class DBJudge {
     static async GetAll() {
+        // Obtenemos todas las peticiones
         const [result] = await connect.query("SELECT * FROM Peticiones");
 
+        // Las devolvemos en bruto
         return result;
     }
 
@@ -24,14 +26,16 @@ export class DBJudge {
 
         // Validamos el method
         switch (true) {
+            // Si recibimos un 400 +4 pto
             case status == 400:
                 peligro += 4;
                 break;
 
+            // Si recibimos un 404 +2 pto
             case status == 404:
-                peligro += 4;
+                peligro += 2;
                 break;
-
+            // Cualquier error 4** +1 pto
             case status < 500 && status > 400:
                 peligro += 1;
                 break;
@@ -39,17 +43,20 @@ export class DBJudge {
 
         // Validamos que la uri no tenga parametros prohibidos
         if (FORBIDEN_URI.some((url) => uri.includes(url))) {
+            // Si los tiene +3 pto
             peligro += 3;
         }
 
         // Validamos el user agent
         if (FORBIDEN_USER_AGENT.some(agents => user_agent.includes(agents))) {
+            // Si lo tiene +10 pto
             peligro += 10;
         }
 
         // Si peligro es mayor 1, contamos la peticion como maliciosa.
         const malicioso = (peligro > 0) ? 1 : 0;
 
+        // Actualizamos los valores de peligro y sumamos una petición maliciosa al contador
         await connect.query(
             "UPDATE IPs SET peligro = peligro + ?, malicious_count = malicious_count + ? WHERE ip LIKE ? ",
             [peligro, malicioso, ip]
@@ -57,19 +64,23 @@ export class DBJudge {
     }
 
     static async GetIPsInfo() {
+        // Obtenemos toda la información de las IPs
         const [result] = await connect.query("SELECT * FROM IPs");
 
+        // Las devolvemos
         return result;
     }
 
     static async JudgeBehavior(info) {
+        // Sacamos los parametros necesarios
         const { ip, peligro, baneos, is_banned } = info;
-        // Si ya está baneado lo dejamos
+        // Si ya está baneado salimos
         if (is_banned === "true") return
 
+        // Inicializamos el nivel de ban
         let ban_level = 0;
 
-        // Creamos el nivel de baneo
+        // Creamos el nivel de baneo en funcion a la cantidad de peligro de esa IP
         switch (true) {
             case peligro > 10 && peligro <= 30:
                 ban_level = 1;
