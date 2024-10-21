@@ -94,8 +94,14 @@ export class DBJudge {
                 ban_level = 3;
                 break;
 
-            case peligro > 71:
+            case peligro > 71 && peligro <= 100:
                 ban_level = 4;
+                break;
+            case peligro > 101 && peligro <= 130:
+                ban_level = 5;
+                break;
+            case peligro > 131:
+                ban_level = 6;
                 break;
         }
 
@@ -106,20 +112,26 @@ export class DBJudge {
 
         // Equivalencias entre niveles y horas baneadas
         const bans = {
-            0: null,
             1: 1,
             2: 4,
-            3: 24,
-            4: 0
+            3: 8,
+            4: 16,
+            5: 24
         }
+
+        // Formula para calcular los niveles superiores
+        const calculate_bantime = lvl => { return Math.pow(2, lvl) * 60 * 60 * 1000 }
 
         // Obtenemos cuantos ms estará baneado
-        const ban_time = (bans[(ban_level + baneos)]) * 60 * 60 * 1000;
+        const real_ban_level = ban_level + baneos;
 
-        // Si es un baneo de nivel 4 añadimos 6 meses
-        if (ban_level === 4){
-            ban_time * 24 * 7 * 30 * 6;
-        }
+        let ban_time = (real_ban_level <= 5) 
+            // Si es menor o igual a 5
+            ? bans[real_ban_level] * 60 * 60 * 1000
+            // Si es mayor calculamos el nuevo valor
+            : calculate_bantime(real_ban_level);
+
+        console.log(ip, ban_time);
 
         // Obtenemos la fecha actual
         const current_time = new Date();
@@ -132,18 +144,20 @@ export class DBJudge {
 
         // Metemos al Firewall
         const addRule = `sudo ufw deny from ${ip}`;
-        execSync(addRule, (error) => { if (error) console.log(error);});
+        execSync(addRule, (error) => { if (error) console.log(error); });
+
+        console.log(ip, ban_time, unban_time, current_time);
 
         // Metemos el baneo a la tabla
         await connect.query(
             "INSERT INTO Baneos(ip, ban_level, time, unban_time) VALUES (?,?,?,?)",
-            [ ip, ban_level, current_time.toISOString(), unban_time.toISOString() ]
+            [ip, ban_level, current_time, unban_time]
         );
 
         // Reinciamos el conteo de peligro y aumentamos en 1 los baneos 
         await connect.query(
             "UPDATE IPs SET peligro = 0,baneos = baneos + 1, last_ban = ?, is_banned = ? WHERE ip = ?",
-            [current_time.toISOString(), "true", ip]
+            [current_time, "true", ip]
         );
     }
 }
