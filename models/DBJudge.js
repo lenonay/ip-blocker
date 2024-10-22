@@ -35,10 +35,6 @@ export class DBJudge {
             case status == 404:
                 peligro += 2;
                 break;
-            // Cualquier error 4** +1 pto
-            case status < 500 && status > 400:
-                peligro += 1;
-                break;
         }
 
         // Validamos que la uri no tenga parametros prohibidos
@@ -82,7 +78,7 @@ export class DBJudge {
 
         // Creamos el nivel de baneo en funcion a la cantidad de peligro de esa IP
         switch (true) {
-            case peligro > 10 && peligro <= 30:
+            case peligro > 20 && peligro <= 30:
                 ban_level = 1;
                 break;
 
