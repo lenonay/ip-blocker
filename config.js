@@ -23,18 +23,17 @@ export const {
 } = process.env;
 
 // Exportamos la conexión a la DB
-export const connect = await mysql2.createConnection({
-    host: DB_HOST,
-    user: DB_USER,
-    password: DB_PASS,
-    database: DB
-});
+    export const connect = await mysql2.createConnection({
+        host: DB_HOST,
+        user: DB_USER,
+        password: DB_PASS,
+        database: DB
+    });
 
 // Listado de URL prohibidas
 export const FORBIDEN_URI = [
-    ".env", "cgi-bin/luci/;stok=/locale",
-    "../../../", "/cgi-bin/.%2e/",
-    "\x16", "*",
+    "cgi-bin/luci/;stok=/locale", "../../../",
+    "/cgi-bin/.%2e/", "\x16",
     "robots.txt", "webui/",
     "Gh0st", "cloudflare",
     "shell", "web-console",
@@ -44,11 +43,9 @@ export const FORBIDEN_URI = [
 // User agents prohibidos, que son usados en scrappers entre otras cosas
 export const FORBIDEN_USER_AGENT = [
     "python", "Palo Alto Networks company",
-    "-", "InternetMeasurement",
-    "Googlebot", "Go-http-client",
-    "Keydrop", "zgrab",
+    "InternetMeasurement","Googlebot",
+    "Go-http-client", "zgrab",
     "Odin", "CensysInspect",
     "Custom-AsyncHttpClient", "TheInternetSearchx",
-    "curl", "",
-    " "
+    "curl"
 ]
