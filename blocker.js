@@ -50,7 +50,7 @@ if(!existe){
     await CleanLogs();
     
     // Salimos con error
-    exit(1);
+    exit(0);
 }
 
 try {
