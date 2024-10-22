@@ -23,12 +23,12 @@ export const {
 } = process.env;
 
 // Exportamos la conexión a la DB
-    export const connect = await mysql2.createConnection({
-        host: DB_HOST,
-        user: DB_USER,
-        password: DB_PASS,
-        database: DB
-    });
+export const connect = await mysql2.createConnection({
+    host: DB_HOST,
+    user: DB_USER,
+    password: DB_PASS,
+    database: DB
+});
 
 // Listado de URL prohibidas
 export const FORBIDEN_URI = [
