@@ -1,8 +1,8 @@
 import mysql2 from "mysql2/promise";
 import { exit } from "node:process";
-import { configDotenv } from "dotenv";
+import { config } from "dotenv";
 
-configDotenv();
+config({ path: "./.env" });
 // Validamos la ruta del config 
 if(!process.env.LOG){
     console.error("No se encontró el fichero {.env}, es necesario que contenga los parametros adecuados");

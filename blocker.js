@@ -7,6 +7,7 @@ import { ProccessLog } from "./controllers/logger.js";
 import { JudgeBehavior } from "./controllers/judge.js";
 import { ReviewBans } from "./controllers/review.js";
 import { CleanLogs } from "./controllers/clean_logs.js";
+import { MySQL } from "./models/RegisterToDB.js";
 
 // Temporal hay que quitarlo para un buen funcionamiento
 // Elimina todas las reglas del firewall
@@ -28,6 +29,13 @@ const existe = fs.existsSync(LOG);
 // Si no existe el fichero validamos todo lo demas
 if(!existe){
     console.log("No hay fichero de logs");
+    // Verificar la integridad de la DB
+    const Validate = await MySQL.Verify();
+
+    if(!Validate) {
+        console.log("Faltan tablas necesarias");
+        exit(1);
+    }
     
     // Juzgar el comportamiento de las peticiones
     console.log("Juzgando las peticiones y las IPs...");
