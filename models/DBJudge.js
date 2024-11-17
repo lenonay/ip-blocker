@@ -1,5 +1,5 @@
 import { execSync } from "node:child_process";
-import { connect, FORBIDEN_URI, FORBIDEN_USER_AGENT } from "../config.js";
+import { connect, FORBIDEN_URI, FORBIDEN_USER_AGENT, FORBIDEN_METHODS } from "../config.js";
 
 
 export class DBJudge {
@@ -19,7 +19,7 @@ export class DBJudge {
         const { ip, method, status, uri, user_agent } = entry;
 
         // Validamos el metodo
-        if (method !== "POST" && method !== "GET") {
+        if (FORBIDEN_METHODS.some((metodo) => { method == metodo })) {
             // Si es un método inusual sumamos 1 punto de peligro
             peligro += 2;
         }

@@ -41,6 +41,10 @@ export const FORBIDEN_URI = [
     "bloglines"
 ]
 
+export const FORBIDEN_METHODS = [
+    "HEAD"
+];
+
 // User agents prohibidos, que son usados en scrappers entre otras cosas
 export const FORBIDEN_USER_AGENT = [
     "python", "Palo Alto Networks company",
