@@ -52,5 +52,5 @@ export const FORBIDEN_USER_AGENT = [
     "Go-http-client", "zgrab",
     "Odin", "CensysInspect",
     "Custom-AsyncHttpClient", "TheInternetSearchx",
-    "curl"
+    "curl", "drifnet"
 ]
