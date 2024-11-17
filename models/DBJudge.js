@@ -78,7 +78,7 @@ export class DBJudge {
 
         // Creamos el nivel de baneo en funcion a la cantidad de peligro de esa IP
         switch (true) {
-            case peligro > 20 && peligro <= 30:
+            case peligro > 15 && peligro <= 30:
                 ban_level = 1;
                 break;
 

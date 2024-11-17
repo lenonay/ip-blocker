@@ -28,19 +28,18 @@ export class DBReviewBans {
             // Lo sacamos del firewall
             const comando = `ufw delete deny from ${ip}`;
             execSync(comando, async (error) => { 
-                if(error) console.log(error); 
-                
+                if(error) console.log(error);
+	    });
                 // Lo quitamos de la DB.
                 await connect.query(
                     "DELETE FROM Baneos WHERE ip = ?",
                     [ ip ]
                 );
-                
+
                 // Actualizamos el valor de is_banned a false
                 await connect.query(
                     "UPDATE IPs set is_banned = ? WHERE ip = ?",
                     ["false", ip]
                 );
-            });
     }
 }

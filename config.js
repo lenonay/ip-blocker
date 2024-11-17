@@ -2,8 +2,8 @@ import mysql2 from "mysql2/promise";
 import { exit } from "node:process";
 import { config } from "dotenv";
 
-config({ path: "./.env" });
-// Validamos la ruta del config 
+config({ path: "/home/nonay/ip-blocker/.env" });
+// Validamos la ruta del config
 if(!process.env.LOG){
     console.error("No se encontró el fichero {.env}, es necesario que contenga los parametros adecuados");
     console.log("Ruta actual de trabajo:",process.cwd());
@@ -37,7 +37,8 @@ export const FORBIDEN_URI = [
     "robots.txt", "webui/",
     "Gh0st", "cloudflare",
     "shell", "web-console",
-    "wp"
+    "wp", "DEBUG_SESSION_START",
+    "bloglines"
 ]
 
 // User agents prohibidos, que son usados en scrappers entre otras cosas
